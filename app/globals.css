@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-bg: #0f0f0f;
+  --color-surface: #202020;
+  --color-lime: #5dd62c;
+  --color-forest: #337418;
+  --color-offwhite: #f8f8f8;
+}
+
+* {
+  border-color: rgba(248, 248, 248, 0.08);
+}
+
+html,
+body {
+  background-color: var(--color-bg);
+  color: var(--color-offwhite);
+}
+
+body {
+  min-height: 100vh;
+}
+
+::selection {
+  background-color: var(--color-lime);
+  color: var(--color-bg);
+}
+
+/* Minimal, calm scrollbars — no clutter */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(248, 248, 248, 0.15);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(93, 214, 44, 0.4);
+}
+
+input,
+textarea,
+select {
+  background-color: var(--color-surface);
+  color: var(--color-offwhite);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(248, 248, 248, 0.35);
+}
+
+button {
+  font-family: inherit;
+}
+
+.focus-ring {
+  outline: none;
+}
+.focus-ring:focus-visible {
+  box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-lime);
+}
