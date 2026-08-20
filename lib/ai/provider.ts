@@ -8,8 +8,6 @@
 // register it in the switch below — no other file in the app changes.
 // ==============================================================================
 
-import { KimiProvider } from './providers/kimi';
-
 export interface AiMessage {
   role: 'system' | 'user' | 'assistant';
   content: string;
@@ -41,6 +39,7 @@ export function getAiProvider(): AiProvider {
 
   switch (providerName) {
     case 'kimi': {
+      const { KimiProvider } = require('./providers/kimi') as typeof import('./providers/kimi');
       cachedProvider = new KimiProvider();
       break;
     }
