@@ -32,7 +32,7 @@ export function MeetingSetupForm({ businesses, userId }: { businesses: Pick<Busi
 
   useEffect(() => {
     if (businessId) setActiveBusinessId(businessId);
-  }, [businessId]);
+  }, [businessId, setActiveBusinessId]);
 
   function toggleType(type: string) {
     setSelectedTypes((prev) => (prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]));
