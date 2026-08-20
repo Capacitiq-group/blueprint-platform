@@ -4,6 +4,14 @@
 // If you have the Supabase CLI available, you can regenerate this file
 // automatically instead of maintaining it by hand:
 //   npx supabase gen types typescript --project-id YOUR_PROJECT_REF > lib/types/database.ts
+//
+// NOTE ON `Relationships`: each table below declares its real foreign keys
+// (matching supabase/migrations/0001_init.sql) in the shape supabase-js's
+// generic type machinery expects. This isn't decorative — it's what makes
+// embedded/joined selects like `.select('*, businesses(name)')` resolve to
+// the correct type instead of `never`. Foreign keys to `auth.users` are
+// omitted since that table isn't modelled here and the app never embeds
+// through it.
 // ==============================================================================
 
 export type MeetingStatus = 'setup' | 'live' | 'completed';
@@ -69,9 +77,9 @@ export interface OperationsSection {
 }
 
 export interface BrandVoiceSection {
-  tone?: string[]; // e.g. Professional, Direct, Warm, Consultative
-  style?: string[]; // e.g. Concise, Detailed, Conversational
-  behaviour?: string[]; // e.g. Never aggressive, Ask before recommending
+  tone?: string[];
+  style?: string[];
+  behaviour?: string[];
   preferred_terminology?: string;
   words_to_use?: string;
   words_to_avoid?: string;
@@ -89,6 +97,7 @@ export interface Database {
         };
         Insert: Partial<Database['public']['Tables']['profiles']['Row']> & { id: string; email: string };
         Update: Partial<Database['public']['Tables']['profiles']['Row']>;
+        Relationships: [];
       };
       businesses: {
         Row: {
@@ -117,6 +126,7 @@ export interface Database {
           owner_id: string;
         };
         Update: Partial<Database['public']['Tables']['businesses']['Row']>;
+        Relationships: [];
       };
       business_members: {
         Row: {
@@ -130,6 +140,15 @@ export interface Database {
           user_id: string;
         };
         Update: Partial<Database['public']['Tables']['business_members']['Row']>;
+        Relationships: [
+          {
+            foreignKeyName: 'business_members_business_id_fkey';
+            columns: ['business_id'];
+            isOneToOne: false;
+            referencedRelation: 'businesses';
+            referencedColumns: ['id'];
+          }
+        ];
       };
       knowledge_documents: {
         Row: {
@@ -150,6 +169,15 @@ export interface Database {
           owner_id: string;
         };
         Update: Partial<Database['public']['Tables']['knowledge_documents']['Row']>;
+        Relationships: [
+          {
+            foreignKeyName: 'knowledge_documents_business_id_fkey';
+            columns: ['business_id'];
+            isOneToOne: false;
+            referencedRelation: 'businesses';
+            referencedColumns: ['id'];
+          }
+        ];
       };
       contacts: {
         Row: {
@@ -168,6 +196,15 @@ export interface Database {
         };
         Insert: Partial<Database['public']['Tables']['contacts']['Row']> & { business_id: string };
         Update: Partial<Database['public']['Tables']['contacts']['Row']>;
+        Relationships: [
+          {
+            foreignKeyName: 'contacts_business_id_fkey';
+            columns: ['business_id'];
+            isOneToOne: false;
+            referencedRelation: 'businesses';
+            referencedColumns: ['id'];
+          }
+        ];
       };
       meetings: {
         Row: {
@@ -191,6 +228,22 @@ export interface Database {
           created_by: string;
         };
         Update: Partial<Database['public']['Tables']['meetings']['Row']>;
+        Relationships: [
+          {
+            foreignKeyName: 'meetings_business_id_fkey';
+            columns: ['business_id'];
+            isOneToOne: false;
+            referencedRelation: 'businesses';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'meetings_contact_id_fkey';
+            columns: ['contact_id'];
+            isOneToOne: false;
+            referencedRelation: 'contacts';
+            referencedColumns: ['id'];
+          }
+        ];
       };
       meeting_transcript_entries: {
         Row: {
@@ -207,6 +260,15 @@ export interface Database {
           content: string;
         };
         Update: Partial<Database['public']['Tables']['meeting_transcript_entries']['Row']>;
+        Relationships: [
+          {
+            foreignKeyName: 'meeting_transcript_entries_meeting_id_fkey';
+            columns: ['meeting_id'];
+            isOneToOne: false;
+            referencedRelation: 'meetings';
+            referencedColumns: ['id'];
+          }
+        ];
       };
       meeting_notes: {
         Row: {
@@ -222,6 +284,15 @@ export interface Database {
           content: string;
         };
         Update: Partial<Database['public']['Tables']['meeting_notes']['Row']>;
+        Relationships: [
+          {
+            foreignKeyName: 'meeting_notes_meeting_id_fkey';
+            columns: ['meeting_id'];
+            isOneToOne: false;
+            referencedRelation: 'meetings';
+            referencedColumns: ['id'];
+          }
+        ];
       };
       ai_suggestions: {
         Row: {
@@ -242,6 +313,15 @@ export interface Database {
           content: string;
         };
         Update: Partial<Database['public']['Tables']['ai_suggestions']['Row']>;
+        Relationships: [
+          {
+            foreignKeyName: 'ai_suggestions_meeting_id_fkey';
+            columns: ['meeting_id'];
+            isOneToOne: false;
+            referencedRelation: 'meetings';
+            referencedColumns: ['id'];
+          }
+        ];
       };
       meeting_summaries: {
         Row: {
@@ -259,8 +339,21 @@ export interface Database {
           meeting_id: string;
         };
         Update: Partial<Database['public']['Tables']['meeting_summaries']['Row']>;
+        Relationships: [
+          {
+            foreignKeyName: 'meeting_summaries_meeting_id_fkey';
+            columns: ['meeting_id'];
+            isOneToOne: true;
+            referencedRelation: 'meetings';
+            referencedColumns: ['id'];
+          }
+        ];
       };
     };
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
   };
 }
 
